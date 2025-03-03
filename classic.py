@@ -1,6 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.action_chains import ActionChains
 from time import sleep
 import pandas as pd
 
@@ -43,9 +43,11 @@ sleep(3)
 # makes
 driver.find_element(By.CSS_SELECTOR, ".gap-5 > div:nth-child(1) > a:nth-child(3)").click() # expand to all makes
 sleep(3)
-df = extract_list_items(driver.find_element(By.CSS_SELECTOR, ".gap-5 > div:nth-child(1) > div:nth-child(2)").find_elements(By.CLASS_NAME, "text-base"), "make")
-make = user_select(df, "make")
-print("Selection: ", df.iloc[int(make)]['make'])
+make_list = driver.find_element(By.CSS_SELECTOR, ".gap-5 > div:nth-child(1) > div:nth-child(2)").find_elements(By.CLASS_NAME, "text-base") # collect list of all vehicle makes as individual web elements
+df = extract_list_items(make_list, "make") # extract text content from list of web elements for vehicle makes
+make = user_select(df, "make") # prompt user to select an option from the list of makes
+print("Selection: ", df.iloc[int(make)]['make']) # print selection
+ActionChains(driver).scroll_to_element(make_list[int(make)]).perform() # move to the user-selected item
 breakpoint()
 driver.quit()
 
